@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:weightSum="2">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/used_time_text"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="24dp"
+            android:textColor="@color/color_accent"
+            android:text="@string/empty"/>
+
+        <TextView
+            android:id="@+id/state_text"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:textSize="12dp"
+            android:textColor="@android:color/darker_gray"
+            android:text="@string/empty"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/end_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:text="@string/empty"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
