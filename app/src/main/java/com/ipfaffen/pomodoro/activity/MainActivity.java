@@ -13,9 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.ipfaffen.pomodoro.R;
+import com.ipfaffen.pomodoro.fragment.FragmentBase;
 import com.ipfaffen.pomodoro.fragment.HistoryFragment;
 import com.ipfaffen.pomodoro.fragment.SettingsFragment;
 import com.ipfaffen.pomodoro.fragment.TimerFragment;
+import com.ipfaffen.pomodoro.listener.OnPageChangeSimpleListener;
+import com.ipfaffen.pomodoro.util.PagerHelper;
+import com.ipfaffen.pomodoro.util.PagerItem;
 import com.ipfaffen.pomodoro.util.SmartFragmentStatePagerAdapter;
 
 /**
@@ -23,11 +27,7 @@ import com.ipfaffen.pomodoro.util.SmartFragmentStatePagerAdapter;
  */
 public class MainActivity extends ActivityBase implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int PAGES = 3;
-    private static final int PAGE_SETTINGS = 0;
-    private static final int PAGE_TIMER = 1;
-    private static final int PAGE_HISTORY = 2;
-
+    private PagerHelper pagerHelper;
     private PagerAdapter pagerAdapter;
     private ViewPager viewPager;
 
@@ -47,36 +47,24 @@ public class MainActivity extends ActivityBase implements NavigationView.OnNavig
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Configure activity items/fragments.
+        pagerHelper = new PagerHelper();
+        pagerHelper.addItem(new PagerItem(0, R.id.nav_settings, R.string.menu_settings, SettingsFragment.class));
+        pagerHelper.addItem(new PagerItem(1, R.id.nav_new, R.string.menu_new, TimerFragment.class), true);
+        pagerHelper.addItem(new PagerItem(2, R.id.nav_history, R.string.menu_history, HistoryFragment.class));
+
         // Create the adapter that will return a fragment for each section of the activity.
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
+        // Set up the view pager with the sections adapter.
         viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(PAGE_TIMER);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.setCurrentItem(pagerHelper.getMainItem().getPosition());
+        viewPager.addOnPageChangeListener(new OnPageChangeSimpleListener() {
             @Override
             public void onPageSelected(int position) {
-                if(position == PAGE_SETTINGS) {
-                    SettingsFragment fragment = (SettingsFragment) pagerAdapter.getRegisteredFragment(position);
-                    fragment.prepare();
-                }
-                else if(position == PAGE_TIMER) {
-                    TimerFragment fragment = (TimerFragment) pagerAdapter.getRegisteredFragment(position);
-                    fragment.prepare();
-                }
-                else if(position == PAGE_HISTORY) {
-                    HistoryFragment fragment = (HistoryFragment) pagerAdapter.getRegisteredFragment(position);
-                    fragment.list();
-                }
-            }
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+                FragmentBase fragment = (FragmentBase) pagerAdapter.getRegisteredFragment(position);
+                fragment.prepare();
             }
         });
 
@@ -97,23 +85,17 @@ public class MainActivity extends ActivityBase implements NavigationView.OnNavig
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        if(id == R.id.nav_new) {
-            viewPager.setCurrentItem(1);
+        int navId = menuItem.getItemId();
+        int pagerItemPosition = pagerHelper.getItemByNavId(navId).getPosition();
+        if(pagerItemPosition >= 0) {
+            viewPager.setCurrentItem(pagerItemPosition);
         }
-        else if(id == R.id.nav_history) {
-            viewPager.setCurrentItem(2);
-        }
-        else if(id == R.id.nav_settings) {
-            viewPager.setCurrentItem(0);
-        }
-        else if(id == R.id.nav_share) {
+        else if(navId == R.id.nav_share) {
             // TODO Implement share option...
             return false;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -133,37 +115,17 @@ public class MainActivity extends ActivityBase implements NavigationView.OnNavig
 
         @Override
         public Fragment getItem(int position) {
-            Fragment fragment =null;
-            switch(position) {
-                case PAGE_SETTINGS:
-                    fragment = SettingsFragment.newInstance();
-                    break;
-                case PAGE_TIMER:
-                    fragment = TimerFragment.newInstance();
-                    break;
-                case PAGE_HISTORY:
-                    fragment = HistoryFragment.newInstance();
-                    break;
-            }
-            return fragment;
+            return pagerHelper.getItemByPosition(position).newFragmentInstance();
         }
 
         @Override
         public int getCount() {
-            return PAGES;
+            return pagerHelper.getTotalItems();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch(position) {
-                case 0:
-                    return getString(R.string.menu_settings);
-                case 1:
-                    return getString(R.string.menu_new);
-                case 2:
-                    return getString(R.string.menu_history);
-            }
-            return null;
+            return getString(pagerHelper.getItemByPosition(position).getTitleResId());
         }
     }
 }

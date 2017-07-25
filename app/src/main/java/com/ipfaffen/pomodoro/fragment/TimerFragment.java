@@ -48,13 +48,6 @@ public class TimerFragment extends FragmentBase {
     private PomodoroDao pomodoroDao;
     private Pomodoro pomodoro;
 
-    public static TimerFragment newInstance() {
-        TimerFragment fragment = new TimerFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,13 +81,14 @@ public class TimerFragment extends FragmentBase {
         return rootView;
     }
 
+    @Override
     public void prepare() {
         if(timerRunning) {
             prepareOnTimerEnd = true;
             return;
         }
 
-        workTime = app.getSecurePrefs().getInt("workTime", App.DEFAULT_WORK_TIME);
+        workTime = app.getPreferences().getWorkTime();
         workTimeMillis = (workTime * 60 * 1000);
         leftTimeMillis = workTimeMillis;
 
@@ -195,6 +189,12 @@ public class TimerFragment extends FragmentBase {
     }
 
     private void updatePomodoro(Date endDate, long usedTimeMillis, String state) {
+        if((usedTimeMillis / 1000) < App.MIN_POMODORO_TIME_SECONDS) {
+            // Delete initiated pomodoro if it did not reach the minimum time.
+            pomodoroDao.delete(pomodoro);
+            showWarning(R.string.error_min_pomodoro_time_expected, App.MIN_POMODORO_TIME_SECONDS);
+            return;
+        }
         pomodoro.setEndDate(endDate);
         pomodoro.setUsedTimeMillis(usedTimeMillis);
         pomodoro.setState(state);

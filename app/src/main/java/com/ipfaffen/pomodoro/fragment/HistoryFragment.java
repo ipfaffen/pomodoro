@@ -28,13 +28,6 @@ public class HistoryFragment extends FragmentBase {
 
     private PomodoroDao pomodoroDao;
 
-    public static HistoryFragment newInstance() {
-        HistoryFragment fragment = new HistoryFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +60,12 @@ public class HistoryFragment extends FragmentBase {
 
         return rootView;
     }
-    
+
+    @Override
+    public void prepare() {
+        list();
+    }
+
     public void list() {
         listAdapter.clear();
         listAdapter.addAll(pomodoroDao.queryBuilder().where(PomodoroDao.Properties.EndDate.isNotNull()).orderDesc(PomodoroDao.Properties.StartDate).list());

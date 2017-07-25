@@ -16,7 +16,7 @@ import java.io.OutputStream;
 /**
  * @author Isaias Pfaffenseller
  */
-public class DataBaseHelper extends DatabaseOpenHelper {
+public class DatabaseHelper extends DatabaseOpenHelper {
 
     private Context context;
     public static final int SCHEMA_VERSION = 1;
@@ -30,7 +30,7 @@ public class DataBaseHelper extends DatabaseOpenHelper {
      * @param name
      * @throws IOException
      */
-    public DataBaseHelper(Context context, String name) throws IOException {
+    public DatabaseHelper(Context context, String name) throws IOException {
         super(context, name, null, SCHEMA_VERSION);
         this.context = context;
         DB_NAME = name;

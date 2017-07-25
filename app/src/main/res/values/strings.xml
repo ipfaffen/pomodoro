@@ -4,8 +4,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-
     <string name="menu_new">New</string>
     <string name="menu_history">History</string>
     <string name="menu_settings">Settings</string>
@@ -20,6 +18,9 @@
 
     <string name="notification_timer_finished_title">Work time is over.</string>
     <string name="notification_timer_finished_text">Take a break!</string>
+
+    <string name="error_generic">Unexpected error.</string>
+    <string name="error_min_pomodoro_time_expected">Pomodoro must have at least %1$d seconds.</string>
 
     <string name="work_time">Work Time</string>
     <string name="empty">Empty</string>
